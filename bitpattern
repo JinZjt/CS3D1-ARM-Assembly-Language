@@ -1,0 +1,35 @@
+	AREA	BitPattern, CODE, READONLY
+	IMPORT	main
+	EXPORT	start
+start
+
+	LDR	R1, =2_01110001000111101100111000111111
+	EOR R0, R0, R0
+	EOR R4, R4, R4
+	ADDS R0, R0, R0 //ADDS is used to refresh the carry flag
+	EOR R2,R2,R2
+	EOR R3,R3,R3
+while1 
+	CMP R1, #0        // if(r1!=0)
+	BEQ endif
+	EOR R2,R2,R2
+	EOR R3,R3,R3	  // R2, R3 is used to distinguish a series of 1 and 0. If r2 is less than r3, then a 0 appears. Therefore, I need to go back to while1.
+	ADDS R4, R4, R4   // refresh every time
+	MOVS R1, R1, LSR #1
+	BCS plus
+	B while1
+plus 
+	ADD R0, R0, #1
+again 
+	CMP R1, #0
+	BEQ endif
+	MOVS R1, R1, LSR #1
+	ADC R2, R2, #0
+	ADD R3,R3, #1
+	CMP R2, R3
+	BCC while1
+	B   again
+	
+endif
+stop	B	stop
+	END
