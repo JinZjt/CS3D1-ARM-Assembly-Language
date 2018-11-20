@@ -1,0 +1,24 @@
+	AREA	ValToHex, CODE, READONLY
+	IMPORT	main
+	EXPORT	start
+start
+	LDR R1, =0xFEED1234
+	LDR R0, =9
+	LDR R3, =0xF
+	LDR R2, =0xA1000407
+	B testwh
+wh AND R4, R3, R1
+   CMP R4, #9 ;to see if it is integar or alphabet
+   BCC endif1
+   ADD R4, R4, #55 ; deal with alphabet
+   STRB R4, [R2], #-1
+   MOV R1, R1, LSR #4 ; switch to another bit
+   B testwh
+endif1  ADD R4, R4, #48 ;deal with integar
+        STRB R4, [R2], #-1
+	    MOV R1, R1, LSR #4 ; switch to another bit
+testwh EOR R4, R4, R4 
+	   SUBS R0, R0, #1
+	   BNE wh
+stop	B	stop
+	END
