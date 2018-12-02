@@ -1,0 +1,17 @@
+	AREA	Arithmetic, CODE, READONLY
+	IMPORT	main
+	EXPORT	start
+start
+	MOV R1, #0x8
+	EOR R0, R0, R0
+	LDR R2, =0x4
+	EOR R3, R3, R3
+	MUL R3, R1, R2
+	MUL R3, R1, R3 ;Z=4*X*X
+	EOR R4, R4, R4
+	LDR R2, =0x3
+	MUL R4, R2, R1 ;Y=3*X
+	ADD R0, R3, R4 ;R0 = 4*X*X+3*X
+stop	B	stop
+
+	END
