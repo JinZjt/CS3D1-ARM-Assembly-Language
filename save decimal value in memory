@@ -1,0 +1,51 @@
+	AREA	decimal, CODE, READONLY
+	IMPORT	main
+	EXPORT	start
+start
+	LDR R0, =str
+	LDR R3, =0xA1000400 ; stack pointer
+	ADD R5, R3, #4  ; keep the original address
+	;store all the characters of string in memory
+	B testwh1
+wh1 CMP R1, #0x2D
+	BEQ negative
+	SUB R1, R1, #0x30
+negative 
+	STMDB R3!, {R1}
+testwh1 LDRB R1, [R0], #1
+		CMP R1, #0
+		BNE wh1
+	;calculate the value of this string
+	LDR R2, =10 ; mutiply factor
+	EOR R4, R4, R4 ; loop variable
+	EOR R6, R6, R6 ; temp variable to update the value
+	B testwh2
+wh2 CMP R4, #0
+	EOR R7, R7, R7 ; temp variable to store the mutiply result
+	BNE decimaladdition
+	ADD R6, R6, R1
+	B endif2
+decimaladdition MUL R7, R4, R2
+				MUL R7, R1, R7
+				ADD R6, R6, R7
+endif2 
+	ADD R4, R4, #1
+testwh2 LDRB R1, [R3], #4 ; Here is 4 but not 1
+		CMP R1, #0x2D
+		BEQ sub1
+		CMP R3, R5
+		BCC wh2
+back	STR R6, [R5, #-4]
+	B endif1
+sub1 BL negation
+	 B back
+endif1
+stop	B	stop
+;get the complemental code
+negation STMDB R3!, {R0,lr}
+		 LDR R0, =0xFFFFFFFF
+		 EOR R6, R6, R0
+		 ADD R6, R6, #1
+		 LDMFD R3!, {R0, pc}
+str DCB "-34",0
+	END
