@@ -1,0 +1,30 @@
+	AREA	cardinality, CODE, READONLY
+	IMPORT	main
+	EXPORT	start
+start
+	LDR R0, =str
+	LDR R3, = 0xA1000400 ;R3 is set as a stack pointer
+	EOR R1, R1, R1 ;The pointer used to read from memory
+	EOR R2, R2, R2 ;Store the result of cardinality
+begin	LDRB R1, [R0], #1
+		CMP R1, #0
+		BEQ endif
+test LDR R4, = 0xA1000400 ; Test pointer 
+	 CMP R3, R4 ; If there is no 
+	 BEQ store
+loop	 LDRB R5, [R4, #-4]!	  ;to check if there is same values stored in the memory
+	 CMP R5, R1
+	 BEQ begin ; If there is one found to be the same in the memory
+	 CMP R4, R3
+	 BNE loop ; Keep traversal if it hasn't reach the end of the current sddress
+store	 STMDB R3!, {R1} ; Store the value into memory
+	 ADD R2, R2, #1
+	 B begin
+endif
+stop	B	stop
+
+str DCB 0x4, 0x9, 0x3, 0x4 
+	DCB	0x7, 0x9, 0xC, 0xA
+	DCB 0x4, 0x7, 0x3, 0xC
+	DCB 0x5, 0x5, 0x7
+	END
