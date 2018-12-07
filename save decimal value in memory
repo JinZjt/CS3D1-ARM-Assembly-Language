@@ -21,13 +21,17 @@ testwh1 LDRB R1, [R0], #1
 	EOR R6, R6, R6 ; temp variable to update the value
 	B testwh2
 wh2 CMP R4, #0
-	EOR R7, R7, R7 ; temp variable to store the mutiply result
+	LDR R7, =1 ; temp variable to store the mutiply result
 	BNE decimaladdition
 	ADD R6, R6, R1
 	B endif2
-decimaladdition MUL R7, R4, R2
-				MUL R7, R1, R7
-				ADD R6, R6, R7
+decimaladdition
+MOV R8, R4 ; temp loop variable
+wh   MUL R7, R2, R7
+	 SUBS R8, R8, #1
+	 BNE wh
+	MUL R7, R1, R7
+	ADD R6, R6, R7
 endif2 
 	ADD R4, R4, #1
 testwh2 LDRB R1, [R3], #4 ; Here is 4 but not 1
